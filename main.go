@@ -13,7 +13,10 @@ type person struct {
 	Name string `json:"name"`
 }
 
-// people slice to seed record person data.
+type pingResponse struct {
+	Ping string
+}
+
 var people = []person{
 	{
 		ID:   "1",
@@ -33,9 +36,18 @@ func main() {
 	// a gin router to handle requests
 	var router *gin.Engine = gin.Default()
 	router.GET("/people", getPeople)
+	router.GET("/ping", ping)
 	// insert request handlers
 	// Listen at http://localhost:8080
 	router.Run(":8080")
+}
+
+// a route used by the cron-schedule node.js server to ping the server
+func ping(context *gin.Context) {
+	var pingMsg = pingResponse{
+		Ping: "success",
+	}
+	context.IndentedJSON(http.StatusOK, pingMsg)
 }
 
 func getPeople(context *gin.Context) {
